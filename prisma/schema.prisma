@@ -1,0 +1,50 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Project {
+  id             Int         @id @default(autoincrement())
+  createdAt      DateTime    @default(now())
+  description    String
+  name           String      @unique
+  startDate      DateTime    @default(now())
+  endDate        DateTime?
+  active         Boolean     @default(false)
+  updatedAt      DateTime    @default(now()) @updatedAt
+  contributor    Contributor @relation(fields: [contributor_id], references: [id])
+  contributor_id Int
+
+  @@map(name: "projects")
+}
+
+model Contributor {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  office    String
+  name      String
+  admission DateTime @default(now())
+  active    Boolean  @default(false)
+  updatedAt DateTime @default(now()) @updatedAt
+
+  projects Project[]
+  @@map(name: "contributors")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  active    Boolean  @default(false)
+  updatedAt DateTime @default(now()) @updatedAt
+  login     String   @unique
+  password  String
+
+  @@map(name: "users")
+}
